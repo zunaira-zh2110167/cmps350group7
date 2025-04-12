@@ -13,20 +13,19 @@ body {
     box-shadow: 0 0 10px lightgray;
 }
 
+input, button {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+}
+
 button {
-    padding: 10px 20px;
-    margin: 20px 0;
-    background-color: #63a7f0;
+    background-color: #4caf50;
     color: white;
     border: none;
     cursor: pointer;
 }
 
 button:hover {
-    background-color: #4678ae;
-}
-
-#calendarLinks {
-    margin-top: 20px;
-    text-align: left;
+    background-color: #45a049;
 }

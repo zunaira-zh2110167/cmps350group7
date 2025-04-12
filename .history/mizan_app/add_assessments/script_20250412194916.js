@@ -98,17 +98,29 @@ document.addEventListener("DOMContentLoaded", async function() {
         ]
         
         // Fetch all data in parallel for better performance
-       const type=[
-        "Homework",
-        "Quiz",
-        "Midterm",
-        "Final Exam",
-        "Project"
-]
-const depts=[
-    "CS",
-    "CE"
-]
+        const [courseResponse, assessmentsResponse, typeResponse, deptResponse] = await Promise.all([
+            fetch("./mizan-data/courses.json"),
+            fetch("./mizan-data/assessments.json"),
+            fetch("./mizan-data/assessment_type.json"),
+            fetch("./mizan-data/departments.json")
+        ]);
+
+        // Check all responses
+        if (!assessmentsResponse.ok || !typeResponse.ok || !deptResponse.ok) {
+            throw new Error(`Failed to fetch data: ${assessmentsResponse.status}`);
+        }
+
+        // Parse all JSON data
+        const [assessments, types, depts] = await Promise.all([
+            assessmentsResponse.json(),
+            typeResponse.json(),
+            deptResponse.json()
+        ]);
+
+        if (!Array.isArray(courses)) {
+            throw new Error("Invalid data format: expected array");
+        }
+
         // Initialize UI components
         displayCourseIDOption(courses);
         displayCourseNameOption(courses);

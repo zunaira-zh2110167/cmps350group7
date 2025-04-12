@@ -15,34 +15,20 @@ body {
 }
 
 .dashboard {
-    display: flex;
-    min-height: 100vh;
+    background: var(--secondary-color);
+    padding: 10px 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
 }
 
 nav {
-    width: 200px;
-    background: var(--background-dark);
-    color: var(--text-light);
-    padding: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
 }
 
-nav ul {
-    list-style: none;
-    padding: 0;
-}
-
-nav ul li {
-    margin: 15px 0;
-}
-
-nav ul li a {
-    color: var(--text-light);
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-nav ul li a:hover {
-    color: #ccc;
+.nav-bar a:hover {
+    color: var(--primary-color);
 }
 
 .main-content {

@@ -1,10 +1,20 @@
 const calendar = document.getElementById("calendar");
 const currentMonthYear = document.getElementById("currentMonthYear");
-const prevMonth = document.getElementById("prevMonth");
-const nextMonth = document.getElementById("nextMonth");
+const prevMonthBtn = document.getElementById("prevMonth");
+const nextMonthBtn = document.getElementById("nextMonth");
 
 let currentDate = new Date();
+let assessments = []; 
 
+async function fetchAssessments() {
+  try {
+    const response = await fetch('/mizan-data/assessments.json');
+    assessments = await response.json();
+    renderCalendar(); 
+  } catch (error) {
+    console.error("Failed to load assessments:", error);
+  }
+}
 
 function renderCalendar() {
   calendar.innerHTML = "";
@@ -61,19 +71,19 @@ function renderCalendar() {
 }
 
 function getAssessmentTitles(year, month, day) {
-  const dateStr = (day < 10 ? "0" + day : day) + "/" + (month < 10 ? "0" + month : month) + "/" + year;
-  return assessments.filter(a => a.date === dateStr).map(a => a.title);
+  const dateStr = `${String(day).padStart(2, "0")}-${String(month).padStart(2, "0")}-${year}`;
+  return assessments.filter(a => a.duedate === dateStr).map(a => a.title);
 }
-  
 
-prevMonth.addEventListener("click", () => {
+
+prevMonthBtn.addEventListener("click", () => {
   currentDate.setMonth(currentDate.getMonth() - 1);
   renderCalendar();
 });
 
-nextMonth.addEventListener("click", () => {
+nextMonthBtn.addEventListener("click", () => {
   currentDate.setMonth(currentDate.getMonth() + 1);
   renderCalendar();
 });
 
-renderCalendar();
+fetchAssessments();

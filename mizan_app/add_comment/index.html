@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Course Comment - Mizān</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Add Course Comment</h1>
+    <form id="commentForm">
+      <select id="courseSelect" required>
+        <option value="">Select a Course</option>
+      </select>
+
+      <input type="text" id="commentTitle" placeholder="Comment Title" required />
+      <textarea id="commentBody" placeholder="Comment Body" required></textarea>
+      <button type="submit">Submit Comment</button>
+    </form>
+    <p id="successMsg"></p>
+  </div>
+
+  <script src="js/index.js"></script>
+</body>
+</html>

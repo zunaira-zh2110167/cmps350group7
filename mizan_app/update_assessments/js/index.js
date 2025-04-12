@@ -1,24 +1,44 @@
-// Example assessment list
-let assessments = [
-    { title: "Midterm 1", dueDate: "2025-04-10", effortHours: 5 },
-    { title: "Final Exam", dueDate: "2025-05-20", effortHours: 10 }
-];
+let assessments = []; // start empty
 
+// Load assessments
+async function loadAssessments() {
+  const localData = localStorage.getItem("assessments");
+
+  if (localData) {
+    assessments = JSON.parse(localData);
+  } else {
+    try {
+      const response = await fetch('../mizan-data/assessments.json');
+      assessments = await response.json();
+    } catch (error) {
+      console.error("Failed to load assessments:", error);
+    }
+  }
+}
+
+loadAssessments(); // Call when page loads
+
+// Update form submit handler
 document.getElementById("updateForm").addEventListener("submit", function(event) {
     event.preventDefault();
     
-    const title = document.getElementById("assessmentTitle").value;
+    const title = document.getElementById("assessmentTitle").value.trim();
     const newDueDate = document.getElementById("newDueDate").value;
     const newEffortHours = document.getElementById("newEffortHours").value;
     
-    const assessment = assessments.find(a => a.title === title);
-    
+    const assessment = assessments.find(a => a.title.toLowerCase() === title.toLowerCase());
+    const result = document.getElementById("result");
+
     if (assessment) {
-        assessment.dueDate = newDueDate;
-        assessment.effortHours = parseInt(newEffortHours);
-        document.getElementById("result").textContent = "Assessment updated successfully!";
+        assessment.duedate = newDueDate;  // match your real JSON field name (duedate not dueDate!)
+        assessment.efforthours = parseFloat(newEffortHours); // match JSON field name (efforthours)
+
+        // Save updated assessments to localStorage
+        localStorage.setItem("assessments", JSON.stringify(assessments));
+
+        result.textContent = "Assessment updated successfully!";
     } else {
-        document.getElementById("result").textContent = "Assessment not found.";
+        result.textContent = "Assessment not found.";
     }
 
     document.getElementById("updateForm").reset();

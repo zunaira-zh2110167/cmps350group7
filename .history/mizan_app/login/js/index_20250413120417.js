@@ -1,35 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-    
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login - Mizān</title>
-  <link rel="stylesheet" href="login/css/styles.css" />
-</head>
-
-<body>
-    <div class="login-container">
-        <h2>Login to Mizān</h2>
-        <form id="loginForm">
-            <input type="email" id="email" placeholder="Email" required />
-            <input type="password" id="password" placeholder="Password" required />
-            <select id="role" required>
-                <option value="">Select Role</option>
-                <option value="student">Student</option>
-                <option value="instructor">Instructor</option>
-                <option value="coordinator">Coordinator</option>
-            </select>
-            <button type="submit">Login</button>
-        </form>
-    </div>
-    <script>
-        document.getElementById("loginForm").addEventListener("submit", async function (e) {
+document.getElementById("loginForm").addEventListener("submit", async function (e) {
   e.preventDefault();
 
-<<<<<<< Updated upstream:mizan_app/login/login.html
-    <script src="login/js/index.js"></script>
-=======
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
   const role = document.getElementById("role").value;
@@ -62,9 +33,3 @@
     errorMsg.textContent = "An error occurred. Please try again later.";
   }
 });
-
-    </script>
->>>>>>> Stashed changes:mizan_app/login/index.html
-</body>
-
-</html>

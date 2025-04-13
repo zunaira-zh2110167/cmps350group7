@@ -10,7 +10,7 @@ document.getElementById("commentForm").addEventListener("submit", async function
 
   const newComment = { courseId, title, body, author, date };
 
-  const res = await fetch("../api/comments.js", {
+  const res = await fetch("/api/comments", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(newComment),

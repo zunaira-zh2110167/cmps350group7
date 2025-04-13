@@ -1,7 +1,7 @@
 let assessments = []; 
 async function loadAssessments() {
   try {
-    const response = await fetch('../mizan-data/assessments.json'); 
+    const response = await fetch('/api/assessments'); 
     assessments = await response.json();
   } catch (error) {
     console.error("Failed to fetch assessments:", error);

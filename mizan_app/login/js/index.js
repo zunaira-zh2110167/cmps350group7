@@ -7,7 +7,7 @@ document.getElementById("loginForm").addEventListener("submit", async function (
   const errorMsg = document.getElementById("errorMsg");
 
   try {
-    const response = await fetch('data/users.json');
+    const response = await fetch('/api/users');
     const users = await response.json();
 
     const matchedUser = users.find(

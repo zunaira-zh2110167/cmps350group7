@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", async function() {
     try {
-        const response = await fetch("../../mizan-data/assessments.json" );
+        const response = await fetch("/api/assessments" );
         
         if (!response.ok) {
             throw new Error(`Failed to fetch data: ${response.status}`);

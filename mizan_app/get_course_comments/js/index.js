@@ -3,7 +3,7 @@
 document.getElementById("showComments").addEventListener("click", async function () {
   const courseId = document.getElementById("courseSelect").value;
 
-  const res = await fetch("../api/comments.js?courseId=" + courseId);
+  const res = await fetch("/api/comments?courseId=" + courseId);
   const comments = await res.json();
 
   const commentsDiv = document.getElementById("commentsList");

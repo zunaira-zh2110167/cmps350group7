@@ -175,7 +175,7 @@ const depts=[
                 };
 
                 // Send data to server
-                const response = await fetch("../../mizan-data/assessments.json", {
+                const response = await fetch("/api/assessments", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-const  filePath = path.join(process.cwd(),'mizan_app','mizan-data','assessments.json');
+const  filePath = path.join(process.cwd(),'mizan-data','assessments.json');
 
 export async function GET(){
     const data = JSON.parse(fs.readFileSync(filePath));

@@ -2,7 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const filePath = path.join(process.cwd(), 'mizan_app','mizan-data', 'comments.json');
+const filePath = path.join(process.cwd(), 'mizan-data', 'comments.json');
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);

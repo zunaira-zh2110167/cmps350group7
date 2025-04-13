@@ -8,13 +8,14 @@ let assessments = [];
 
 async function fetchAssessments() {
   try {
-    const response = await fetch('/mizan-data/assessments.json');
+    const response = await fetch('/api/assessments');
     assessments = await response.json();
     renderCalendar(); 
   } catch (error) {
     console.error("Failed to load assessments:", error);
   }
 }
+
 
 function renderCalendar() {
   calendar.innerHTML = "";

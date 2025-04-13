@@ -19,11 +19,11 @@ document.getElementById("loginForm").addEventListener("submit", async function (
       alert("Login successful!");
 
       if (role === "student") {
-        window.location.href = "../../get_assessments/student-get-assessments/index.html";
+        window.location.href = "../student_calendar/index.html";
       } else if (role === "instructor") {
-        window.location.href = "../../get_assessments/instructor-get-assessments/index.html";
+        window.location.href = "../add_comment/index.html";
       } else {
-        window.location.href = "../../get_assessments/coordinator-get-assessments/index.html";
+        window.location.href = "../add_comment/index.html";
       }      
     } else {
       errorMsg.textContent = "Invalid credentials or role. Try again.";

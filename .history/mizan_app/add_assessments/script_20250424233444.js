@@ -175,13 +175,7 @@ const depts=[
                 };
 
                 // Send data to server
-                const response = await fetch("/api/assessments", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(newAssessment)
-                });
+                localStorage.setItem("assessments",JSON.stringify(newAssessment))
 
                 if (!response.ok) {
                     throw new Error('Failed to save assessment');

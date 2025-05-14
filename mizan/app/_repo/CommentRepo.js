@@ -1,81 +1,74 @@
-import fs from "fs-extra";
-import path from "path";
+import { PrismaClient } from "@prisma/client";
 import userRepo from "./UserRepo";
 
+const prisma = new PrismaClient();
+
 class CommentRepo {
-  constructor() {
-    this.commentsFilePath = path.resolve("data/comments.json");
-  }
-
-  async #readComments() {
-    const comments = await fs.readJson(this.commentsFilePath);
-    return comments.sort((a, b) => new Date(a.date) - new Date(b.date));
-  }
-
-  async #writeComments(comments) {
-    await fs.writeJson(this.commentsFilePath, comments, { spaces: 2 });
-  }
-
   async getComments(sectionCRN) {
-    const comments = await this.#readComments();
-    const sectionComments = comments.filter(
-      (comment) => comment.sectionCRN === sectionCRN
-    );
-    // Assign author name to each comment
-    const commentsWithAuthor = await Promise.all(
-      sectionComments.map(async (comment) => {
-        const author = await userRepo.getUser(comment.authorId);
-        return {
-          ...comment,
-          authorName: `${author.firstName} ${author.lastName}`,
-        };
-      })
-    );
-    console.log("Comments with author:", commentsWithAuthor);
-    return commentsWithAuthor;
+    const comments = await prisma.comment.findMany({
+      where: { sectionCRN, replyToCommentId: null },
+      orderBy: { date: "asc" },
+      include: {
+        author: {
+          select: {
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
+    });
+
+    return comments.map((comment) => ({
+      ...comment,
+      authorName: `${comment.author.firstName} ${comment.author.lastName}`,
+    }));
   }
 
   async getCommentReplies(commentId) {
-    const comments = await this.#readComments();
-    const replies = comments.filter(
-      ({ replyToCommentId }) => replyToCommentId === commentId
-    );
-    // Assign author name to each reply
-    const repliesWithAuthor = await Promise.all(
-      replies.map(async (reply) => {
-        const author = await userRepo.getUser(reply.authorId);
-        return {
-          ...reply,
-          authorName: `${author.firstName} ${author.lastName}`,
-        };
-      })
-    );
-    console.log("Replies with author:", repliesWithAuthor);
-    return repliesWithAuthor;
+    const replies = await prisma.comment.findMany({
+      where: { replyToCommentId: commentId },
+      orderBy: { date: "asc" },
+      include: {
+        author: {
+          select: {
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
+    });
+
+    return replies.map((reply) => ({
+      ...reply,
+      authorName: `${reply.author.firstName} ${reply.author.lastName}`,
+    }));
   }
 
   async addComment(comment) {
-    const comments = await this.#readComments();
-    const newComment = {
-      ...comment,
-      id: Date.now(),
-      createdDate: new Date().toISOString().split("T")[0],
-    };
+    const newComment = await prisma.comment.create({
+      data: {
+        content: comment.content,
+        date: new Date(),
+        createdDate: new Date().toISOString().split("T")[0],
+        authorId: comment.authorId,
+        sectionCRN: comment.sectionCRN,
+        replyToCommentId: comment.replyToCommentId || null,
+      },
+    });
 
-    comments.push(newComment);
-    await this.#writeComments(comments);
     return newComment;
   }
 
   async deleteComment(commentId) {
-    const comments = await this.#readComments();
-    // Keep comments that are neither the target comment nor replies to it
-    const filteredComments = comments.filter(
-      ({ id, replyToCommentId }) =>
-        !(id == commentId || replyToCommentId == commentId)
-    );
-    console.log("Filtered comments:", filteredComments);
-    await this.#writeComments(filteredComments);
+    // Delete all replies first
+    await prisma.comment.deleteMany({
+      where: {
+        OR: [
+          { id: commentId },
+          { replyToCommentId: commentId },
+        ],
+      },
+    });
   }
 }
 

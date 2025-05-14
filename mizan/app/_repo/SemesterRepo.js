@@ -2,7 +2,7 @@ import fs from "fs-extra";
 import path from "path";
 
 // Define path to semesters data file
-const semesterFilePath = path.join(process.cwd(), "data/semesters.json");
+// const semesterFilePath = path.join(process.cwd(), "data/semesters.json");
 
 export async function getSemesters() {
   return await prisma.semester.findMany({});

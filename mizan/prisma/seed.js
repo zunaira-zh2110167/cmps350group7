@@ -2,84 +2,133 @@ import { PrismaClient } from "@prisma/client";
 import path from "path";
 import fs from "fs-extra";
 
+const prisma = new PrismaClient();
 const basePath = path.join(process.cwd(), "data");
 
 async function main() {
-  const prisma = new PrismaClient();
+  console.log("🧹 Clearing all tables...");
+  await prisma.comment.deleteMany();
+  await prisma.assessment.deleteMany();
+  await prisma.section.deleteMany();
+  await prisma.user.deleteMany();
+  await prisma.semester.deleteMany();
   await prisma.assessmentType.deleteMany();
 
   try {
-    await seedAssessmentTypes(prisma);
-    await seedNonStudentUsers(prisma);
-    await seedSections(prisma);
-    await seedStudents(prisma);
+    console.log("seeding data...");
+    await seedAssessmentTypes();
+    await seedSemesters();
+    await seedSections();
+    await seedNonStudentUsers();
+    await seedStudents();
+    await seedAssessments();
+    await seedComments();
+    console.log("All data seeded successfully.");
   } catch (e) {
-    console.error(e);
+    console.error("Seeding failed:", e);
     throw e;
   } finally {
     await prisma.$disconnect();
   }
 }
 
-async function seedAssessmentTypes(prisma) {
-  const dataFilePath = path.join(basePath, "assessment-types.json");
-  const assessmentTypes = await fs.readJSON(dataFilePath);
-  for (const type of assessmentTypes) {
-    console.log("Creating assessment type:", type);
+async function seedAssessmentTypes() {
+  const data = await fs.readJSON(path.join(basePath, "assessment-types.json"));
+  for (const type of data) {
     await prisma.assessmentType.create({ data: type });
   }
 }
 
-async function seedNonStudentUsers(prisma) {
-  const dataFilePath = path.join(basePath, "users.json");
-  const users = await fs.readJSON(dataFilePath);
-  const nonStudentUsers = users.filter((user) => user.role !== "Student");
-  for (const user of nonStudentUsers) {
+async function seedSemesters() {
+  const data = await fs.readJSON(path.join(basePath, "semesters.json"));
+  for (const semester of data) {
+    await prisma.semester.create({ data: semester });
+  }
+}
+
+async function seedSections() {
+  const data = await fs.readJSON(path.join(basePath, "sections.json"));
+  for (const section of data) {
+    await prisma.section.create({ data: section });
+  }
+}
+
+async function seedNonStudentUsers() {
+  const data = await fs.readJSON(path.join(basePath, "users.json"));
+  const nonStudents = data.filter((user) => user.role !== "Student");
+  for (const user of nonStudents) {
     delete user.registeredSections;
-    console.log("Creating user:", user);
-    // Only create if user doesn't exist in DB
-    await prisma.user.upsert({
-      where: { email: user.email },
-      update: {},
-      create: user,
-    });
+    await prisma.user.create({ data: user });
   }
 }
 
-async function seedSections(prisma) {
-  const sectionsFilePath = path.join(basePath, "sections.json");
-  const sections = await fs.readJSON(sectionsFilePath);
-  for (const section of sections) {
-    console.log("Creating section:", section);
-    // Only create if section doesn't exist in DB
-    await prisma.section.upsert({
-      where: { crn: section.crn },
-      update: {},
-      create: section,
-    });
-  }
-}
-
-async function seedStudents(prisma) {
-  const dataFilePath = path.join(basePath, "users.json");
-  const users = await fs.readJSON(dataFilePath);
-  const students = users.filter((user) => user.role == "Student");
+async function seedStudents() {
+  const data = await fs.readJSON(path.join(basePath, "users.json"));
+  const students = data.filter((user) => user.role === "Student");
   for (const student of students) {
-    console.log("Creating student:", student);
     const { registeredSections, ...userData } = student;
-    // If student doesn't exist in DB, create student
-    // and connect sections
-    await prisma.user.upsert({
-      where: { email: student.email },
-      update: {},
-      create: {
+    await prisma.user.create({
+      data: {
         ...userData,
         registeredSections: {
-          connect: registeredSections, // Connect sections by CRN
+          connect: registeredSections.map((crn) => ({ crn })),
         },
       },
     });
   }
 }
+
+async function seedAssessments() {
+  const data = await fs.readJSON(path.join(basePath, "assessments.json"));
+
+  for (const raw of data) {
+    const {
+      id,
+      section,
+      creator,
+      sectionCRN,
+      createdBy = 3, 
+      title,
+      type,
+      dueDate,
+      effortHours,
+      weight
+    } = raw;
+
+    await prisma.assessment.create({
+      data: {
+        sectionCRN,
+        createdBy,
+        title,
+        type,
+        dueDate: new Date(dueDate),
+        effortHours,
+        weight,
+      },
+    });
+  }
+}
+
+
+async function seedComments() {
+  const data = await fs.readJSON(path.join(basePath, "comments.json"));
+
+  for (const raw of data) {
+    const {
+      id,               
+      createdDate,    
+      section, author, 
+      ...rest
+    } = raw;
+
+    await prisma.comment.create({
+      data: {
+        ...rest,
+        createdAt: new Date(createdDate),
+      },
+    });
+  }
+}
+
 
 await main();

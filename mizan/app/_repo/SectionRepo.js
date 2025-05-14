@@ -2,13 +2,13 @@ import fs from "fs-extra";
 import path from "path";
 
 class SectionRepo {
-  constructor() {
-    this.sectionFilePath = path.join(process.cwd(), "data/sections.json");
-  }
+  // constructor() {
+  //   this.sectionFilePath = path.join(process.cwd(), "data/sections.json");
+  // }
 
-  async #readSections() {
-    return await prisma.section.findMany({});
-  }
+  // async #readSections() {
+  //   return await prisma.section.findMany({});
+  // }
 
   async getSectionById(sectionCRN) {
     return await prisma.section.findUnique({

@@ -14,15 +14,18 @@ model AssessmentType {
   id    String @id
   label String
 }
-model Assessment{
-  id      String @id
-  sectionCRN String
-  title String
-  type String
-  dueDate DateTime
-  effortHours Int
-  weight Float
+model Assessment {
+  id           Int      @id @default(autoincrement())
+  sectionCRN   String
+  title        String
+  type         String
+  dueDate      DateTime
+  effortHours  Int
+  weight       Float
+  createdBy    Int
+  createdDate  DateTime @default(now())
 }
+
 model Section{
 crn String @id
 courseCode String
@@ -39,7 +42,7 @@ model Semester{
   isDefault Boolean @default(false)
 }
 model User{
-  id String @id
+  id Int @id @default(autoincrement())
   firstName String
   lastName String
   email String
@@ -49,7 +52,7 @@ model User{
   registeredSections Section[]
 }
 model Comment{
-  id String @id
+  id Int @id @default(autoincrement())
   sectionCRN String
   authorId Int
   title String

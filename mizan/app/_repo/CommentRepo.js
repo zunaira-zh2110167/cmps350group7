@@ -1,11 +1,12 @@
 import prisma from "@/lib/prisma";
-import userRepo from "./UserRepo";
+
 
 class CommentRepo {
+  // get comments for a  section
   async getComments(sectionCRN) {
     const comments = await prisma.comment.findMany({
       where: { sectionCRN, replyToCommentId: null },
-      orderBy: { date: "asc" },
+      orderBy: { createdAt: "asc" },
       include: {
         author: {
           select: {
@@ -22,10 +23,11 @@ class CommentRepo {
     }));
   }
 
+  // all replies to a specific comment
   async getCommentReplies(commentId) {
     const replies = await prisma.comment.findMany({
       where: { replyToCommentId: commentId },
-      orderBy: { date: "asc" },
+      orderBy: { createdAt: "asc" },
       include: {
         author: {
           select: {
@@ -42,12 +44,11 @@ class CommentRepo {
     }));
   }
 
+  // Add a new comment or reply
   async addComment(comment) {
     const newComment = await prisma.comment.create({
       data: {
         content: comment.content,
-        date: new Date(),
-        createdDate: new Date().toISOString().split("T")[0],
         authorId: comment.authorId,
         sectionCRN: comment.sectionCRN,
         replyToCommentId: comment.replyToCommentId || null,
@@ -57,8 +58,8 @@ class CommentRepo {
     return newComment;
   }
 
+  // Delete a comment and its replies
   async deleteComment(commentId) {
-    // Delete all replies first
     await prisma.comment.deleteMany({
       where: {
         OR: [

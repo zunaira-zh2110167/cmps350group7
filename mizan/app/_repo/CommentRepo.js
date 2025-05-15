@@ -1,11 +1,10 @@
 import prisma from "@/lib/prisma";
 
-
 class CommentRepo {
-  // get comments for a  section
+  // Get all comments for a section
   async getComments(sectionCRN) {
     const comments = await prisma.comment.findMany({
-      where: { sectionCRN, replyToCommentId: null },
+      where: { sectionCRN},
       orderBy: { createdAt: "asc" },
       include: {
         author: {
@@ -23,7 +22,7 @@ class CommentRepo {
     }));
   }
 
-  // all replies to a specific comment
+  // Get all replies to a specific comment
   async getCommentReplies(commentId) {
     const replies = await prisma.comment.findMany({
       where: { replyToCommentId: commentId },
@@ -49,6 +48,7 @@ class CommentRepo {
     const newComment = await prisma.comment.create({
       data: {
         content: comment.content,
+        createdAt: new Date(), // optional, Prisma will handle this if omitted
         authorId: comment.authorId,
         sectionCRN: comment.sectionCRN,
         replyToCommentId: comment.replyToCommentId || null,

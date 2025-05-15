@@ -18,6 +18,7 @@ class CommentRepo {
 
     return comments.map((comment) => ({
       ...comment,
+      title: comment.title,
       authorName: `${comment.author.firstName} ${comment.author.lastName}`,
     }));
   }
@@ -48,7 +49,7 @@ class CommentRepo {
     const newComment = await prisma.comment.create({
       data: {
         content: comment.content,
-        createdAt: new Date(), // optional, Prisma will handle this if omitted
+        title: comment.title,
         authorId: comment.authorId,
         sectionCRN: comment.sectionCRN,
         replyToCommentId: comment.replyToCommentId || null,
@@ -58,17 +59,6 @@ class CommentRepo {
     return newComment;
   }
 
-  // Delete a comment and its replies
-  async deleteComment(commentId) {
-    await prisma.comment.deleteMany({
-      where: {
-        OR: [
-          { id: commentId },
-          { replyToCommentId: commentId },
-        ],
-      },
-    });
-  }
 }
 
 export default new CommentRepo();

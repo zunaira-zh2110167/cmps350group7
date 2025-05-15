@@ -49,7 +49,7 @@ class CommentRepo {
     const newComment = await prisma.comment.create({
       data: {
         content: comment.content,
-        title: comment.title,
+        title: comment.title, // could add here || "Untitled Comment", but no need 
         authorId: comment.authorId,
         sectionCRN: comment.sectionCRN,
         replyToCommentId: comment.replyToCommentId || null,

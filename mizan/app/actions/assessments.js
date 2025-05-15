@@ -51,7 +51,8 @@ export async function getAssessments(semesterId, sectionCRN) {
 
 export async function getAssessmentById(assessmentId) {
   try {
-    return await assessmentRepo.getAssessmentById(assessmentId);
+    return await assessmentRepo.getAssessmentById(Number(assessmentId)); //prisma expects number
+
   } catch (error) {
     console.error(`Error fetching assessment ${assessmentId}:`, error);
     throw new Error(`Failed to retrieve assessment details. ${error.message}`);
@@ -96,13 +97,18 @@ export async function upsertAssessment(formData) {
     }
   }
 
+  if (assessment.dueDate) {
+    assessment.dueDate = new Date(assessment.dueDate).toISOString();
+  }
+
+
   console.log("Upserting assessment:", assessment);
   //return;
   try {
     if (assessment.id && assessment.id !== "") {
       // For update, we omitted validation
       // to keep it simple for now
-      await assessmentRepo.updateAssessment(assessment);
+      await assessmentRepo.updateAssessment(assessment, Number(assessment.id));
     } else {
       if (await validateAssessment(assessment)) {
         // Generate title based on sectionCRN and type

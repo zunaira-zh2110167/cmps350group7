@@ -9,13 +9,13 @@ class AssessmentRepo {
     return await prisma.assessmentType.findMany();
   }
 
-  // constructor() {
-  //   this.assessmentFilePath = path.join(process.cwd(), "data/assessments.json");
-  // }
+  constructor() {
+    this.assessmentFilePath = path.join(process.cwd(), "data/assessments.json");
+  }
 
-  // async #readAssessments() {
-  //   return await prisma.assessment.findMany();
-  // }
+  async #readAssessments() {
+    return await prisma.assessment.findMany();
+  }
 
   async #writeAssessments(assessment) {
     return prisma.assessment.create({ data: assessment });

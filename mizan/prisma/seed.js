@@ -115,20 +115,27 @@ async function seedComments() {
 
   for (const raw of data) {
     const {
-      id,               
-      createdDate,    
-      section, author, 
+      id,
+      sectionCRN,
+      authorId,
+      title,
+      createdDate,
       ...rest
     } = raw;
 
     await prisma.comment.create({
       data: {
-        ...rest,
+        id,
+        sectionCRN,
+        authorId,
+        title,
         createdAt: new Date(createdDate),
+        ...rest,
       },
     });
   }
 }
+
 
 
 await main();

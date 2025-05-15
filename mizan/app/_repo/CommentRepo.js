@@ -1,13 +1,11 @@
-import { PrismaClient } from "@prisma/client";
-import userRepo from "./UserRepo";
-
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 class CommentRepo {
+  // Get all comments for a section
   async getComments(sectionCRN) {
     const comments = await prisma.comment.findMany({
-      where: { sectionCRN, replyToCommentId: null },
-      orderBy: { date: "asc" },
+      where: { sectionCRN},
+      orderBy: { createdAt: "asc" },
       include: {
         author: {
           select: {
@@ -20,14 +18,16 @@ class CommentRepo {
 
     return comments.map((comment) => ({
       ...comment,
+      title: comment.title,
       authorName: `${comment.author.firstName} ${comment.author.lastName}`,
     }));
   }
 
+  // Get all replies to a specific comment
   async getCommentReplies(commentId) {
     const replies = await prisma.comment.findMany({
       where: { replyToCommentId: commentId },
-      orderBy: { date: "asc" },
+      orderBy: { createdAt: "asc" },
       include: {
         author: {
           select: {
@@ -44,12 +44,12 @@ class CommentRepo {
     }));
   }
 
+  // Add a new comment or reply
   async addComment(comment) {
     const newComment = await prisma.comment.create({
       data: {
         content: comment.content,
-        date: new Date(),
-        createdDate: new Date().toISOString().split("T")[0],
+        title: comment.title, // could add here || "Untitled Comment", but no need 
         authorId: comment.authorId,
         sectionCRN: comment.sectionCRN,
         replyToCommentId: comment.replyToCommentId || null,
@@ -59,17 +59,6 @@ class CommentRepo {
     return newComment;
   }
 
-  async deleteComment(commentId) {
-    // Delete all replies first
-    await prisma.comment.deleteMany({
-      where: {
-        OR: [
-          { id: commentId },
-          { replyToCommentId: commentId },
-        ],
-      },
-    });
-  }
 }
 
 export default new CommentRepo();

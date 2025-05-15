@@ -85,7 +85,7 @@ export async function getAssessmentSummary(semesterId, sectionCRN) {
 
 export async function upsertAssessment(formData) {
   const assessment = Object.fromEntries(formData.entries());
-
+  
   for (const key in assessment) {
     // Remove property starting with $ACTION_ID
     if (key.startsWith("$ACTION_ID")) {
@@ -98,7 +98,7 @@ export async function upsertAssessment(formData) {
   }
 
   if (assessment.dueDate) {
-    assessment.dueDate = new Date(assessment.dueDate).toISOString();
+    assessment.dueDate = new Date(assessment.dueDate).toISOString();    //date issue fixed with this
   }
 
 
@@ -116,7 +116,10 @@ export async function upsertAssessment(formData) {
           assessment.sectionCRN,
           assessment.type
         );
-
+        
+        if (assessment.section) {
+          delete assessment.section;
+        }
         await assessmentRepo.addAssessment(assessment);
       }
     }

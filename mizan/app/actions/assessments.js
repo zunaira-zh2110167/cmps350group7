@@ -120,7 +120,11 @@ export async function upsertAssessment(formData) {
         if (assessment.section) {
           delete assessment.section;
         }
-        await assessmentRepo.addAssessment(assessment);
+
+        const user = await getCurrentUser();
+        assessment.createdBy = user.id;
+        await assessmentRepo.addAssessment(assessment);     //changed to fix add!!!
+
       }
     }
   } catch (error) {

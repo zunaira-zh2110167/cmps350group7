@@ -81,9 +81,28 @@ class AssessmentRepo {
 
   
 
-  async addAssessment(assessment) {
-    await prisma.assessment.create({ data: assessment });
+  async addAssessment(assessment) {             //updated!!!
+    return await prisma.assessment.create({
+      data: {
+        title: assessment.title,
+        type: assessment.type,
+        dueDate: assessment.dueDate,
+        effortHours: assessment.effortHours,
+        weight: assessment.weight,
+        createdDate: new Date(),
+
+        section: {
+          connect: { crn: assessment.sectionCRN },
+        },
+
+        creator: {
+          connect: { id: assessment.createdBy },
+        },
+      },
+    });
   }
+
+
 
   async updateAssessment(updatedAssessment, id) {
     await prisma.assessment.update({

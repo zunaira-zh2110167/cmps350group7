@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getCurrentUser } from "@/app/actions/auth";
 import LogoutButton from "./LogoutButton";
 import styles from "./Header.module.css";
-
+import ClientNavLinks from "./ClientNavLinks";
 const links = [
   {
     label: "Assessments",
@@ -21,6 +21,7 @@ export default async function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.brandLogo}>Mizān</div>
+      <ClientNavLinks user={user} />
       <nav className={styles.navContainer}>
         <ul className={styles.navigation}>
           {links.map(({ label, route }) => (

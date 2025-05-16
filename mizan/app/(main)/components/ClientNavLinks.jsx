@@ -10,9 +10,9 @@ export default function ClientNavLinks({ user }) {
   const semesterId = searchParams.get("semesterId");
   const sectionCRN = searchParams.get("sectionCRN");
   const workloadHref = semesterId
-    ? \`/workload-report?semesterId=\${semesterId}\${
-        sectionCRN ? \`&sectionCRN=\${sectionCRN}\` : ""
-      }\`
+    ? `/workload-report?semesterId=${semesterId}${
+        sectionCRN ? `&sectionCRN=${sectionCRN}` : ""
+      }`
     : "/workload-report";
 
   return (
